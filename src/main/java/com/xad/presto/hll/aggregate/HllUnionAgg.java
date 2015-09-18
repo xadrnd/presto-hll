@@ -25,7 +25,7 @@ public final class HllUnionAgg {
     private static String OPTIONAL_HLL_PREFIX = "\\\\x";
 
     @InputFunction
-    public static void input(ByteArrayState state, @SqlType(StandardTypes.VARCHAR) Slice value ) {
+    public static void input_varchar(ByteArrayState state, @SqlType(StandardTypes.VARCHAR) Slice value ) {
         if(value == null) return;
 
         String valueStr = value.toStringUtf8();
@@ -34,7 +34,20 @@ public final class HllUnionAgg {
             valueStr = valueStr.substring(OPTIONAL_HLL_PREFIX.length());
         }
 
-        HLL hll = HLL.fromBytes(NumberUtil.fromHex(valueStr, 0, valueStr.length()));
+        input(state, NumberUtil.fromHex(valueStr, 0, valueStr.length()));
+
+    }
+
+    @InputFunction
+    public static void input_varbin(ByteArrayState state, @SqlType(StandardTypes.VARBINARY) Slice value ) {
+        if(value == null) return;
+
+        input(state, value.getBytes());
+    }
+
+    public static void input(ByteArrayState state, byte[] bytes ) {
+
+        HLL hll = HLL.fromBytes(bytes);
 
         if(state.getSlice() != null) {
             hll.union(HLL.fromBytes(state.getSlice().getBytes()));
