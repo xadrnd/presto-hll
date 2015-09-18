@@ -29,8 +29,7 @@ public class HllFunctionFactory implements FunctionFactory {
         builder.scalar(com.xad.presto.hll.scalar.HllVersion.class);
         builder.scalar(com.xad.presto.hll.scalar.HllCardinality.class);
 
-        // aggregates
-        builder.aggregate(com.xad.presto.hll.aggregate.TestAgg.class);
+        // aggregate
         builder.aggregate(com.xad.presto.hll.aggregate.HllUnionAgg.class);
 
         return builder.getFunctions();
