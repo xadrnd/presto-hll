@@ -20,3 +20,5 @@ benchmark_outputs
 *.pyc
 *.class
 .checkstyle
+dependency-reduced-pom.xml
+test.sh
