@@ -20,14 +20,18 @@ import net.agkn.hll.util.NumberUtil;
 @AggregationFunction("hll_union_agg")
 public final class HllUnionAgg {
     private static final Logger log = Logger.get(HllUnionAgg.class);
+
+    // For compatibility with Postgres files, we support an optional \\x prefix on the HLL Hex Strings
+    private static String OPTIONAL_HLL_PREFIX = "\\\\x";
+
     @InputFunction
     public static void input(ByteArrayState state, @SqlType(StandardTypes.VARCHAR) Slice value ) {
         if(value == null) return;
 
         String valueStr = value.toStringUtf8();
 
-        if(valueStr.startsWith("\\\\x")) {
-            valueStr = valueStr.substring(3);
+        if(valueStr.startsWith(OPTIONAL_HLL_PREFIX)) {
+            valueStr = valueStr.substring(OPTIONAL_HLL_PREFIX.length());
         }
 
         HLL hll = HLL.fromBytes(NumberUtil.fromHex(valueStr, 0, valueStr.length()));
