@@ -23,7 +23,12 @@ public final class HllUnionAgg {
     @InputFunction
     public static void input(ByteArrayState state, @SqlType(StandardTypes.VARCHAR) Slice value ) {
         if(value == null) return;
-        String valueStr = value.toStringUtf8().substring(3);
+
+        String valueStr = value.toStringUtf8();
+
+        if(valueStr.startsWith("\\\\x")) {
+            valueStr = valueStr.substring(3);
+        }
 
         HLL hll = HLL.fromBytes(NumberUtil.fromHex(valueStr, 0, valueStr.length()));
 
